@@ -1,1 +1,1 @@
-# ML-project of Supervised_Learning_Group 14
+# ML project of Supervised Learning Group 14
