@@ -1,9 +1,9 @@
 # ML project of Supervised Learning Group 14
-The code file name is code of project(.py format), the data file name is dataset. 
+The code file name is code of project(.py format), the data file name is dataset(.zip format). 
 How to run:
 1. Download data, unzip
 2. Change the file path in code file
-3. run it 
+3. Run it 
 
 Note:
 The code contains a hyperparameter process, so it takes a certain amount of time to run. If you don't want to run a hyperparameter process, you can run the code according to the following parameter settings:
