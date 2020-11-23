@@ -9,7 +9,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 
 
-df = pd.read_csv('/Users/ziwa/PycharmProjects/featuresmodel V3/covtype.csv')
+df = pd.read_csv('......./covtype.csv')
 df = df.dropna()
 df.head()
 
@@ -38,12 +38,13 @@ Counter(y_resampled)
 
 # Data Extraction
 from sklearn.model_selection import train_test_split, cross_val_score
-X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, stratify=y_resampled, train_size=18900,
+X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, stratify=y_resampled,
+                                                    train_size=18900,test_size=329,
                                                     random_state=0)
 
 # cross validation
 from sklearn.model_selection import StratifiedShuffleSplit
-sss = StratifiedShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
+sss = StratifiedShuffleSplit(n_splits=10, random_state=0)
 for train_index, test_index in sss.split(X_train,y_train):
     #print('train_index', train_index, 'test_index', test_index)
     train_X, train_y = X[train_index], y[train_index]
@@ -58,10 +59,10 @@ test_X = scaler.transform(test_X)
 
 #############################KNN###############################################
 
-# choose the best k and weight
+# Hyperparameter model of KNN
 best_k = 0
 best_score = 0.0
-best_weight = ''
+best_weightofknn = ''
 for method in ["uniform","distance"]:
     for k in range(1,20):
         knnclassifier = KNeighborsClassifier(n_neighbors = k,weights = method)
@@ -70,33 +71,15 @@ for method in ["uniform","distance"]:
         if score > best_score:
             best_score = score
             best_k = k
-            best_weight = method
+            best_weightofknn = method
 print("best_k = %s" %(best_k))
 print("best_score = %s"%(best_score))
-print("best_weight = %s"%(best_weight))
+print("best_weightofknn = %s"%(best_weightofknn))
 
-'''
-# choose the best distance
-best_k = 0
-best_score = 0.0
-best_p = 0
-for p in range(1,8):
-    for k in range(1,11):
-        knnclassifier = KNeighborsClassifier(n_neighbors = k,weights = "distance",p = p)
-        knnclassifier.fit(X_train,y_train)
-        score = knnclassifier.score(X_test,y_test)
-        if score > best_score:
-            best_score = score
-            best_k = k
-            best_p = p
-print("best_k = %s" %(best_k))
-print("best_score = %s"%(best_score))
-print("best_p = %s"%(best_p))
-'''
 
 # KNN model traing
 from sklearn.neighbors import KNeighborsClassifier
-classifier = KNeighborsClassifier(n_neighbors =best_k,weights = best_weight)
+classifier = KNeighborsClassifier(n_neighbors=best_k,weights=best_weightofknn)
 clf=classifier.fit(train_X, train_y)
 y_pred = classifier.predict(test_X)
 
@@ -118,7 +101,7 @@ print (result1)
 
 ######################################## ANN############################
 
-# Hyperparameter model
+# Hyperparameter model of ANN
 
 best_score = 0.0
 best_activation = ''
@@ -130,7 +113,7 @@ for activations in ["identity", "logistic", "tanh", "relu"]:
         for learningrates in ["constant","invscaling", "adaptive"]:
 
             annclassifier = MLPClassifier(hidden_layer_sizes=(60, 60, 60, 60, 60, 60, 60), activation= activations,
-                                          solver= solvers, learning_rate=learningrates, random_state=0)
+                                          solver= solvers, learning_rate= learningrates, random_state=0)
             annclassifier.fit(train_X,train_y)
             score = annclassifier.score(test_X,test_y)
             if score > best_score:
@@ -141,14 +124,14 @@ for activations in ["identity", "logistic", "tanh", "relu"]:
 
 print("best_score = %s"%(best_score))
 print("best_activation = %s"%(best_activation))
-print("best_weight = %s"%(best_weightoptimization))
+print("best_weightofann = %s"%(best_weightoptimization))
 print("best_learningrate = %s"%(best_learningrate))
 
-# KNN model traing
+# ANN model traing
 from sklearn.neural_network import MLPClassifier
 
-clf = MLPClassifier(hidden_layer_sizes=(60, 60, 60, 60, 60, 60, 60), activation=best_activation,
-                     solver= best_weightoptimization, learning_rate=best_learningrate, random_state=0,
+clf = MLPClassifier(hidden_layer_sizes=(60,60,60,60,60,60,60), activation= best_activation,
+                    solver= best_weightoptimization,learning_rate= best_learningrate, random_state=0,
                     ).fit(train_X,train_y)
 
 y_pred = clf.predict(test_X)
@@ -162,10 +145,9 @@ print('Accuracy of ANN classifier on test set: {:.2f}'
 # Evaluation
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
-result = confusion_matrix(test_X, y_pred)
+result = confusion_matrix(test_y, y_pred)
 print("Confusion Matrix:")
 print(result)
 result1 = classification_report(test_y, y_pred)
 print("Classification Report:", )
 print(result1)
-
